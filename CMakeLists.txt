@@ -32,15 +32,26 @@ target_include_directories(BresenhamUI PRIVATE
     ${IMGUI_DIR}/backends
 )
 
-# Encontrar SDL2 y OpenGL
-find_package(SDL2 REQUIRED)
+# Encontrar SDL2 con mejor manejo de errores
+find_package(SDL2 CONFIG QUIET)
+if(NOT SDL2_FOUND)
+    find_package(SDL2 MODULE REQUIRED)
+endif()
+
+# Encontrar OpenGL
 find_package(OpenGL REQUIRED)
 
 # Vincular librerías
 target_link_libraries(BresenhamUI
+    PRIVATE
     SDL2::SDL2
     OpenGL::OpenGL
 )
 
 # Establecer como proyecto de inicio en Visual Studio
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT BresenhamUI)
+
+# Mostrar información de debug
+message(STATUS "SDL2 encontrado: ${SDL2_FOUND}")
+message(STATUS "OpenGL encontrado: ${OPENGL_FOUND}")
+message(STATUS "CMAKE_TOOLCHAIN_FILE: ${CMAKE_TOOLCHAIN_FILE}")
